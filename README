@@ -1,0 +1,25 @@
+Evolution
+================
+ 
+Evolution is a ruby implementation of a hill-climbing algorithm that uses RMagick to generate a collection of polygons which resemble a baseline image.
+ 
+
+ 
+Usage
+=====
+ 
+1 - Pick a baseline image you wish to render.
+2 - Adjust the path to your baseline image and render directory in the top of evolution.rb
+3 - "ruby evolution.rb"
+
+Example: http://joeyschoblaska.com/images/evolution.jpg
+
+ 
+ 
+Author
+======
+ 
+Joey Schoblaska
+Zen Web Apps, LLC
+ 
+Copyright (c) 2008 Joey Schoblaska, released under the MIT license
