@@ -71,7 +71,7 @@ def spawn_mutated_child(parent)
     # mutate
     child.polygons.each do |polygon|
       # add point
-      polygon[:points] << [rand(CANVAS_SIZE), rand(CANVAS_SIZE)] if rand(ADD_POINT_MUTATION_RATE) == 0and polygon[:points].size < MAX_POLYGON_COMPLEXITY
+      polygon[:points].insert(rand(polygon[:points].size), [rand(CANVAS_SIZE), rand(CANVAS_SIZE)]) if rand(ADD_POINT_MUTATION_RATE) == 0 and polygon[:points].size < MAX_POLYGON_COMPLEXITY
     
       # mod points
       polygon[:points].each_with_index{ |points,i| polygon[:points][i] = mutate_points(points) if rand(MOD_POINT_MUTATION_RATE) == 0 }
