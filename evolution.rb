@@ -4,9 +4,9 @@ require 'fileutils.rb'
 include Magick
 
 RENDER_PATH = "/Users/username/evolution"
-BASELINE_IMAGE_PATH = "/Users/username/evolution/baseline.gif"
+BASELINE_IMAGE_PATH = "/Users/username/evolution/baseline-200.gif"
 BASELINE_IMAGE = Magick::Image.read(BASELINE_IMAGE_PATH)
-CANVAS_SIZE = 350 # square which should match baseline image size
+CANVAS_SIZE = 200 # square which should match baseline image size
 CANVAS_BACKGROUND = "black"
 MAX_POLYGONS = 100
 MAX_POLYGON_COMPLEXITY = 10
