@@ -3,55 +3,73 @@ require 'rvg/rvg'
 require 'fileutils.rb'
 include Magick
 
-RENDER_PATH = "/Users/username/evolution"
-BASELINE_IMAGE_PATH = "/Users/username/evolution/baseline-200.gif"
+RENDER_PATH = "/Users/joey/Desktop/evolution"
+BASELINE_IMAGE_PATH = "/Users/joey/Desktop/evolution/baseline-200.gif"
 BASELINE_IMAGE = Magick::Image.read(BASELINE_IMAGE_PATH)
 CANVAS_SIZE = 200 # square which should match baseline image size
 CANVAS_BACKGROUND = "black"
-MAX_POLYGONS = 100
-MAX_POLYGON_COMPLEXITY = 10
 ALPHA_MIN = 24
 ALPHA_MAX = 164
 
-# mutation rates (generations per mutation)
-ADD_POLYGON_MUTATION_RATE = 750
-ADD_POINT_MUTATION_RATE = 1500
-MOD_RGBA_MUTATION_RATE = 1500
-MOD_POINT_MUTATION_RATE = 1500
+# mutation rates (higher number = higher liklihood)
+ADD_POLYGON_MUTATION_RATE = 3
+ADD_POINT_MUTATION_RATE = 5
+MOD_RGBA_MUTATION_RATE = 50
+MOD_POINT_MUTATION_RATE = 50
 
 # mutation strengths
 MOD_RGBA_MUTATION_STRENGTH = 10 # maximum number (out of 255) of points to move in either direction
 MOD_POINT_MUTATION_STRENGTH = 5 # maximum percentage of total canvas size to move along either axis
 
 $id = 0
+$bump = 0
+
+class Array
+  
+  def random(weights = nil)
+    return random(map {|n| n.send(weights)}) if weights.is_a? Symbol
+
+    weights ||= Array.new(length, 1.0)
+    total = weights.inject(0.0) {|t,w| t+w}
+    point = rand * total
+
+    zip(weights).each do |n,w|
+      return n if w >= point
+      point -= w
+    end
+  end
+  
+end
 
 class Creature
   
-  attr_accessor :creature_id, :fitness, :image, :image_path, :polygons, :created_at
+  attr_accessor :creature_id, :fitness, :image, :image_path, :polygons
   
-  def render
-    rvg = RVG.new(CANVAS_SIZE, CANVAS_SIZE).viewbox(0,0,CANVAS_SIZE,CANVAS_SIZE) do |canvas|
-      canvas.background_fill = CANVAS_BACKGROUND
-      self.polygons.each{ |polygon| canvas.polygon(polygon[:points].flatten).styles(:fill=> generate_fill_string(polygon)) }
-    end
-    
-    rvg.draw.write(self.image_path)
-  end
-  
-  def fitness
-    @fitness || @fitness = self.image[0].difference(BASELINE_IMAGE[0])[0]
-  end
-  
-  def image_path
-    @image_path || @image_path = "#{RENDER_PATH}/#{self.creature_id}.gif"
+  def initialize
+    @creature_id = next_id
   end
   
   def image
-    @image || @image = Magick::Image.read(self.image_path)
+    @image ||= RVG.new(CANVAS_SIZE, CANVAS_SIZE).viewbox(0,0,CANVAS_SIZE,CANVAS_SIZE){ |canvas|
+                 canvas.background_fill = CANVAS_BACKGROUND
+                 self.polygons.each{ |polygon| canvas.polygon(polygon[:points].flatten).styles(:fill=> generate_fill_string(polygon)) }
+               }.draw
   end
   
-  def remove_image
-    FileUtils.rm(self.image_path, :force => true)
+  def save
+    @image.write(self.image_path)
+  end
+
+  def fitness
+    @fitness ||= self.image.difference(BASELINE_IMAGE[0])[0]
+  end
+  
+  def image_path
+    @image_path ||= "#{RENDER_PATH}/#{"%09i" % creature_id}.gif" 
+  end
+  
+  def random_polygon
+    polygons[rand(polygons.size)]
   end
   
 end
@@ -62,29 +80,21 @@ end
 
 def spawn_mutated_child(parent)
   child = Creature.new
-  child.created_at = Time.now
-  child.creature_id = next_id
   child.polygons = eval(parent.polygons.inspect)
-  original_polygons = eval(parent.polygons.inspect)
 
-  while child.polygons.inspect == original_polygons.inspect do
-    # mutate
-    child.polygons.each do |polygon|
-      # add point
-      polygon[:points].insert(rand(polygon[:points].size), [rand(CANVAS_SIZE), rand(CANVAS_SIZE)]) if rand(ADD_POINT_MUTATION_RATE) == 0 and polygon[:points].size < MAX_POLYGON_COMPLEXITY
-    
-      # mod points
-      polygon[:points].each_with_index{ |points,i| polygon[:points][i] = mutate_points(points) if rand(MOD_POINT_MUTATION_RATE) == 0 }
-    
-      # mod RGB
-      [:red, :green, :blue].each{ |sym| polygon[sym] = mutate_hex(polygon[sym]) if rand(MOD_RGBA_MUTATION_RATE) == 0 }
-      
-      # mod alpha
-      polygon[:alpha] = mutate_hex(polygon[:alpha], :min => ALPHA_MIN, :max => ALPHA_MAX) if rand(MOD_RGBA_MUTATION_RATE) == 0
-    end
-    
-    # add random polygon
-    child.polygons << random_polygon if rand(ADD_POLYGON_MUTATION_RATE) == 0 and child.polygons.size < MAX_POLYGONS
+  case ["add polygon", "add point", "mod rgba", "mod point"].random([ADD_POLYGON_MUTATION_RATE, ADD_POINT_MUTATION_RATE, MOD_RGBA_MUTATION_RATE, MOD_POINT_MUTATION_RATE])
+  when "add polygon"
+    child.polygons << random_new_polygon
+  when "add point"
+    polygon = child.random_polygon
+    polygon[:points].insert(rand(polygon[:points].size), [rand(CANVAS_SIZE), rand(CANVAS_SIZE)])
+  when "mod rgba"
+    polygon = child.random_polygon
+    [:red, :green, :blue].each{ |sym| polygon[sym] = mutate_hex(polygon[sym]) }
+    polygon[:alpha] = mutate_hex(polygon[:alpha], :min => ALPHA_MIN, :max => ALPHA_MAX)
+  when "mod point"
+    polygon = child.random_polygon
+    polygon[:points].each_with_index{ |points,i| polygon[:points][i] = mutate_points(points) }
   end
 
   return child
@@ -98,27 +108,19 @@ def to_hex(integer)
   integer.to_s(base=16).rjust(2, '0')
 end
 
-def create_first_creature
-  creature = Creature.new
-  creature.created_at = Time.now
-  creature.creature_id = next_id
-  creature.polygons = [random_polygon]
-  return creature
-end
-
-def random_polygon
+def random_new_polygon
   points = []
   hexes = []
   point_offset_x = rand(CANVAS_SIZE)
   point_offset_y = rand(CANVAS_SIZE)
   
   3.times do
-    x = point_offset_x + rand(CANVAS_SIZE / 5)
+    x = point_offset_x + rand(CANVAS_SIZE / 10)
     x = 0 if x < 0
     x = CANVAS_SIZE if x > CANVAS_SIZE
     points << x
     
-    y = point_offset_y + rand(CANVAS_SIZE / 5)
+    y = point_offset_y + rand(CANVAS_SIZE / 10)
     y = 0 if y < 0
     y = CANVAS_SIZE if y > CANVAS_SIZE
     points << y
@@ -152,17 +154,15 @@ def mutate_hex(hex, var = {})
   return hex
 end
 
-@most_fit = create_first_creature
-@most_fit.render
+@most_fit = Creature.new
+@most_fit.polygons = [random_new_polygon]
 
 while $id < 1000000
   child = spawn_mutated_child(@most_fit)
-  child.render
+  
   if child.fitness < @most_fit.fitness
-    @most_fit.remove_image unless @most_fit.creature_id % 20 == 0 # save a few images
+    child.save if ($bump += 1) % 50 == 0
     puts "fitness: #{child.fitness.to_s[0..7]} -- polygon count: #{child.polygons.size.to_s}"
     @most_fit = child
-  else
-    child.remove_image
   end
 end
