@@ -3,8 +3,8 @@ require 'rvg/rvg'
 require 'fileutils.rb'
 include Magick
 
-RENDER_PATH = "/Users/joey/Desktop/evolution"
-BASELINE_IMAGE_PATH = "/Users/joey/Desktop/evolution/baseline-200.gif"
+RENDER_PATH = "/Users/username/Desktop/evolution"
+BASELINE_IMAGE_PATH = "/Users/username/Desktop/evolution/baseline-200.gif"
 BASELINE_IMAGE = Magick::Image.read(BASELINE_IMAGE_PATH)
 CANVAS_SIZE = 200 # square which should match baseline image size
 CANVAS_BACKGROUND = "black"
