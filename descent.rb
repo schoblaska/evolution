@@ -1,16 +1,18 @@
 # this version of the algorithm uses a sort of gradient descent on the newest polygon instead of
 # a straight hill-climb algorithm like evolution.rb
+# interesting, but doesn't work very effectively as implemented here. ideally would need to evaluate more vectors
+# or find a linear derivative somehow
 
 require 'rubygems'
 require 'rvg/rvg'
 require 'fileutils.rb'
 include Magick
 
-RENDER_PATH = "/Users/username/Sites/evolution"
-BASELINE_IMAGE_PATH = "/Users/username/Sites/evolution/baseline-200.gif"
+RENDER_PATH = "/Users/username/Desktop/evolution"
+BASELINE_IMAGE_PATH = "/Users/username/Desktop/evolution/baseline-200.gif"
 BASELINE_IMAGE = Magick::Image.read(BASELINE_IMAGE_PATH)
 CANVAS_SIZE = 200 # square which should match baseline image size
-CANVAS_BACKGROUND = "red"
+CANVAS_BACKGROUND = "black"
 
 LEARNING_RATE = 10
 MIN_ALPHA = 20
@@ -18,21 +20,18 @@ MIN_ALPHA = 20
 $id = 0
 $bump = 0
 
-class Array
-  
-  def random(weights = nil)
-    return random(map {|n| n.send(weights)}) if weights.is_a? Symbol
+$vectors = []
+x = [LEARNING_RATE, LEARNING_RATE * -1]
+x.each{|a| x.each{|b| x.each{|c| x.each{|d| x.each{|e| x.each{|f| x.each{|g| x.each{|h| x.each{|i| x.each{|j| $vectors << [a,b,c,d,e,f,g,h,i,j] } } } } } } } } } }
 
-    weights ||= Array.new(length, 1.0)
-    total = weights.inject(0.0) {|t,w| t+w}
-    point = rand * total
-
-    zip(weights).each do |n,w|
-      return n if w >= point
-      point -= w
-    end
+class Numeric
+  def restrict(min = 0, max = 255)
+    self < min ? min : (self > max ? max : self)
   end
-  
+
+  def to_hex
+    to_s(base=16).rjust(2, '0')
+  end
 end
 
 class Creature
@@ -63,22 +62,17 @@ class Creature
   end
   
   def spawn_best_child
-    array = []
-    x = [LEARNING_RATE, LEARNING_RATE * -1]
-    x.each{|a| x.each{|b| x.each{|c| x.each{|d| x.each{|e| x.each{|f| x.each{|g| x.each{|h| x.each{|i| x.each{|j| array << [a,b,c,d,e,f,g,h,i,j] } } } } } } } } } }
-    
-    possibilities = array.map{ |a|
+    possibilities = $vectors.map{ |a|
       child = Creature.new
       child.polygons = eval(@polygons.inspect)
       last = child.polygons.last
-      new_p = { :blue => last[:blue] + a[0],
-                              :alpha => last[:alpha] + a[1], 
-                              :red => last[:red] + a[2],
-                              :green => last[:green] + a[3],
-                              :points=>[[last[:points][0][0] + a[4], last[:points][0][1] + a[5]],
-                                        [last[:points][1][0] + a[6], last[:points][1][1] + a[7]],
-                                        [last[:points][2][0] + a[8], last[:points][2][1] + a[9]]]}
-      new_p[:alpha] = MIN_ALPHA if new_p[:alpha] < MIN_ALPHA
+      new_p = { :blue => (last[:blue] + a[0]).restrict,
+                :alpha => (last[:alpha] + a[1]).restrict(MIN_ALPHA), 
+                :red => (last[:red] + a[2]).restrict,
+                :green => (last[:green] + a[3]).restrict,
+                :points=>[[last[:points][0][0] + a[4], last[:points][0][1] + a[5]],
+                          [last[:points][1][0] + a[6], last[:points][1][1] + a[7]],
+                          [last[:points][2][0] + a[8], last[:points][2][1] + a[9]]]}
       child.polygons = child.polygons.size == 1 ? [] : child.polygons[0..child.polygons.size-2]
       child.polygons << new_p
       child
@@ -93,11 +87,7 @@ def next_id
 end
 
 def generate_fill_string(polygon)
-  "#" + to_hex(polygon[:red]) + to_hex(polygon[:green]) + to_hex(polygon[:blue]) + to_hex(polygon[:alpha])
-end
-
-def to_hex(integer)
-  integer.to_s(base=16).rjust(2, '0')
+  "#" + polygon[:red].to_hex + polygon[:green].to_hex + polygon[:blue].to_hex + polygon[:alpha].to_hex
 end
 
 def random_new_polygon
@@ -107,15 +97,8 @@ def random_new_polygon
   point_offset_y = rand(CANVAS_SIZE)
   
   3.times do
-    x = point_offset_x + rand(CANVAS_SIZE / 10)
-    x = 0 if x < 0
-    x = CANVAS_SIZE if x > CANVAS_SIZE
-    points << x
-    
-    y = point_offset_y + rand(CANVAS_SIZE / 10)
-    y = 0 if y < 0
-    y = CANVAS_SIZE if y > CANVAS_SIZE
-    points << y
+    points << (point_offset_x + rand(CANVAS_SIZE / 10)).restrict(0, CANVAS_SIZE)
+    points << (point_offset_y + rand(CANVAS_SIZE / 10)).restrict(0, CANVAS_SIZE)
   end
 
   4.times { hexes << rand(256) }

@@ -24,6 +24,16 @@ MOD_POINT_MUTATION_STRENGTH = 5 # maximum percentage of total canvas size to mov
 $id = 0
 $bump = 0
 
+class Numeric
+  def restrict(min = 0, max = 255)
+    self < min ? min : (self > max ? max : self)
+  end
+
+  def to_hex
+    to_s(base=16).rjust(2, '0')
+  end
+end
+
 class Array
   
   def random(weights = nil)
@@ -101,11 +111,7 @@ def spawn_mutated_child(parent)
 end
 
 def generate_fill_string(polygon)
-  "#" + to_hex(polygon[:red]) + to_hex(polygon[:green]) + to_hex(polygon[:blue]) + to_hex(polygon[:alpha])
-end
-
-def to_hex(integer)
-  integer.to_s(base=16).rjust(2, '0')
+  "#" + polygon[:red].to_hex + polygon[:green].to_hex + polygon[:blue].to_hex + polygon[:alpha].to_hex
 end
 
 def random_new_polygon
@@ -115,31 +121,18 @@ def random_new_polygon
   point_offset_y = rand(CANVAS_SIZE)
   
   3.times do
-    x = point_offset_x + rand(CANVAS_SIZE / 10)
-    x = 0 if x < 0
-    x = CANVAS_SIZE if x > CANVAS_SIZE
-    points << x
-    
-    y = point_offset_y + rand(CANVAS_SIZE / 10)
-    y = 0 if y < 0
-    y = CANVAS_SIZE if y > CANVAS_SIZE
-    points << y
+    points << (point_offset_x + rand(CANVAS_SIZE / 10)).restrict(0, CANVAS_SIZE)
+    points << (point_offset_y + rand(CANVAS_SIZE / 10)).restrict(0, CANVAS_SIZE)
   end
 
-  3.times { hexes << rand(256) }
-  hexes << rand(ALPHA_MAX - ALPHA_MIN) + ALPHA_MIN
+  4.times { hexes << rand(256) }
 
   {:points => [[points.pop,points.pop], [points.pop,points.pop], [points.pop,points.pop]], :red => hexes.pop, :green => hexes.pop, :blue => hexes.pop, :alpha => hexes.pop}
 end
 
 def mutate_points(points)
-  x = points[0] + rand(CANVAS_SIZE * MOD_POINT_MUTATION_STRENGTH * 0.02) - (CANVAS_SIZE * MOD_POINT_MUTATION_STRENGTH * 0.01)
-  x = 0 if x < 0
-  x = CANVAS_SIZE if x > CANVAS_SIZE
-  
-  y = points[1] + rand(CANVAS_SIZE * MOD_POINT_MUTATION_STRENGTH * 0.02) - (CANVAS_SIZE * MOD_POINT_MUTATION_STRENGTH * 0.01)
-  y = 0 if y < 0
-  y = CANVAS_SIZE if y > CANVAS_SIZE
+  x = (points[0] + rand(CANVAS_SIZE * MOD_POINT_MUTATION_STRENGTH * 0.02) - (CANVAS_SIZE * MOD_POINT_MUTATION_STRENGTH * 0.01)).restrict(0, CANVAS_SIZE)
+  y = (points[1] + rand(CANVAS_SIZE * MOD_POINT_MUTATION_STRENGTH * 0.02) - (CANVAS_SIZE * MOD_POINT_MUTATION_STRENGTH * 0.01)).restrict(0, CANVAS_SIZE)
     
   return [x, y]
 end
@@ -148,10 +141,7 @@ def mutate_hex(hex, var = {})
   var[:min] ||= 0
   var[:max] ||= 255
   
-  hex = hex + rand(MOD_RGBA_MUTATION_STRENGTH * 2) - MOD_RGBA_MUTATION_STRENGTH
-  hex = var[:min] if hex < var[:min]
-  hex = var[:max] if hex > var[:max]
-  return hex
+  return (hex + rand(MOD_RGBA_MUTATION_STRENGTH * 2) - MOD_RGBA_MUTATION_STRENGTH).restrict(var[:min], var[:max])
 end
 
 @most_fit = Creature.new
