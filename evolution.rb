@@ -53,7 +53,7 @@ end
 
 class Creature
   
-  attr_accessor :creature_id, :fitness, :image, :image_path, :polygons
+  attr_accessor :creature_id, :fitness, :image, :image_path, :svg_path, :polygons
   
   def initialize
     @creature_id = next_id
@@ -62,24 +62,45 @@ class Creature
   def image
     @image ||= RVG.new(CANVAS_SIZE, CANVAS_SIZE).viewbox(0,0,CANVAS_SIZE,CANVAS_SIZE){ |canvas|
                  canvas.background_fill = CANVAS_BACKGROUND
-                 self.polygons.each{ |polygon| canvas.polygon(polygon[:points].flatten).styles(:fill=> generate_fill_string(polygon)) }
+                 polygons.each{ |polygon| canvas.polygon(polygon[:points].flatten).styles(:fill=> generate_fill_string(polygon)) }
                }.draw
   end
   
   def save
-    @image.write(self.image_path)
+    @image.write(image_path)
+    create_svg_file
   end
 
   def fitness
-    @fitness ||= self.image.difference(BASELINE_IMAGE[0])[0]
+    @fitness ||= image.difference(BASELINE_IMAGE[0])[0]
   end
   
   def image_path
     @image_path ||= "#{RENDER_PATH}/#{"%09i" % creature_id}.gif" 
   end
   
+  def svg_path
+    @svg_path ||= "#{RENDER_PATH}/#{"%09i" % creature_id}.txt" 
+  end
+  
   def random_polygon
     polygons[rand(polygons.size)]
+  end
+  
+  def create_svg_file
+    File.open(svg_path, 'w') do |file|  
+      file.puts "<svg width=\"#{CANVAS_SIZE}px\" height=\"#{CANVAS_SIZE}px\" viewBox=\"0 0 #{CANVAS_SIZE} #{CANVAS_SIZE}\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n"
+      file.puts "\t<rect x=\"0\" y=\"0\" width=\"#{CANVAS_SIZE}\" height=\"#{CANVAS_SIZE}\" fill=\"#{CANVAS_BACKGROUND}\" />"
+      
+      polygons.each do |polygon|
+        fill = generate_fill_string(polygon, false)
+        fill_opacity = polygon[:alpha] / 256.0
+        points = polygon[:points].map{|a| a.join(',')}.join(' ')
+        file.puts "\t<polygon fill=\"#{fill}\" fill-opacity=\"#{fill_opacity}\" points=\"#{points}\" />"
+      end
+      
+      file.puts "</svg>"
+    end
   end
   
 end
@@ -110,8 +131,10 @@ def spawn_mutated_child(parent)
   return child
 end
 
-def generate_fill_string(polygon)
-  "#" + polygon[:red].to_hex + polygon[:green].to_hex + polygon[:blue].to_hex + polygon[:alpha].to_hex
+def generate_fill_string(polygon, alpha = true)
+  string = "#" + polygon[:red].to_hex + polygon[:green].to_hex + polygon[:blue].to_hex
+  string << polygon[:alpha].to_hex if alpha
+  return string
 end
 
 def random_new_polygon
