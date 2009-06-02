@@ -89,7 +89,7 @@ class Creature
   
   def create_svg_file
     File.open(svg_path, 'w') do |file|  
-      file.puts "<svg width=\"#{CANVAS_SIZE}px\" height=\"#{CANVAS_SIZE}px\" viewBox=\"0 0 #{CANVAS_SIZE} #{CANVAS_SIZE}\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n"
+      file.puts "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 #{CANVAS_SIZE} #{CANVAS_SIZE}\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n"
       file.puts "\t<rect x=\"0\" y=\"0\" width=\"#{CANVAS_SIZE}\" height=\"#{CANVAS_SIZE}\" fill=\"#{CANVAS_BACKGROUND}\" />"
       
       polygons.each do |polygon|
