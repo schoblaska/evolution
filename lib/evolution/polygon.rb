@@ -5,9 +5,12 @@ module Evolution
     
     def initialize
       @points = []
-      
       3.times { @points << [rand(Evolution::CANVAS_SIZE), rand(Evolution::CANVAS_SIZE)] }
       [:red=, :green=, :blue=, :alpha=].each{ |method| send(method, rand(256)) }
+    end
+    
+    def mutate
+      
     end
     
   end
