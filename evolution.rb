@@ -24,32 +24,6 @@ MOD_POINT_MUTATION_STRENGTH = 5 # maximum percentage of total canvas size to mov
 $id = 0
 $bump = 0
 
-class Numeric
-  def restrict(min = 0, max = 255)
-    self < min ? min : (self > max ? max : self)
-  end
-
-  def to_hex
-    to_s(base=16).rjust(2, '0')
-  end
-end
-
-class Array
-  
-  def random(weights = nil)
-    return random(map {|n| n.send(weights)}) if weights.is_a? Symbol
-
-    weights ||= Array.new(length, 1.0)
-    total = weights.inject(0.0) {|t,w| t+w}
-    point = rand * total
-
-    zip(weights).each do |n,w|
-      return n if w >= point
-      point -= w
-    end
-  end
-  
-end
 
 class Creature
   
