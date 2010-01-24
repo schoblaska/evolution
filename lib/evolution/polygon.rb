@@ -11,7 +11,7 @@ module Evolution
       end
       
       [:red=, :green=, :blue=, :alpha=].each do |attribute|
-        send(attribute, rand(255))
+        send(attribute, rand(256))
       end
     end
     
