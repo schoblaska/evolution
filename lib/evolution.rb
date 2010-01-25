@@ -13,12 +13,15 @@ include Magick
 module Evolution
   
   # TODO: Load constants from config file
-  
   CANVAS_SIZE = 200
   NEW_POLYGON_MUTATION_RATE = 10
   
-  def self.mutation_strength(max)
-    (((rand + 1) ** 8.0 / 256) * max).to_i.restrict(:min => 1, :max => max)
+  def self.generate_mutation(var = {})
+    min, max, initial = var[:min], var[:max], var[:initial]
+    
+    upwards = (((rand + 1) ** 10.0 / 1024) * (max - initial)).to_i
+    downwards = (((rand + 1) ** 10.0 / 1024) * (initial - min)).to_i
+    return (initial + upwards - downwards).restrict(:min => min, :max => max)
   end
   
 end
