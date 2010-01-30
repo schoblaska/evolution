@@ -21,6 +21,17 @@ module Evolution
       File.join(render_directory, "#{"%09i" % id}.txt")
     end
     
+    def spawn_child
+      child = Evolution::Creature.new
+      child.polygons = []
+      polygons.each{ |polygon| child.polygons << polygon.dup }
+      return child
+    end
+    
+    def initialize_copy(other)
+      super
+    end
+    
     
     protected
     

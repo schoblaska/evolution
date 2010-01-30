@@ -68,7 +68,25 @@ class CreatureTest < Test::Unit::TestCase
   
   context 'spawning a child' do
     
-    should 'dup each polygon'
+    setup do
+      @parent = Evolution::Creature.new
+      @child = @parent.spawn_child
+    end
+    
+    should 'increment id' do
+      (@child.id - @parent.id).should == 1
+    end
+    
+    should 'dup each polygon of parent' do
+      @child.polygons.should_not == @parent.polygons
+      
+      @child.polygons.each_with_index do |child_polygon, i|
+        parent_polygon = @parent.polygons[i]
+        [:points, :red, :green, :blue, :alpha].each do |attribute|
+          child_polygon.send(attribute).should == parent_polygon.send(attribute)
+        end
+      end
+    end
     
   end
 
