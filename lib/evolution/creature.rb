@@ -8,6 +8,10 @@ module Evolution
       @polygons = [Evolution::Polygon.new]
     end
     
+    def fitness
+      @fitness ||= to_image.difference(Evolution::BASELINE_IMAGE[0])[0]
+    end
+    
     def mutate
       mutate_polygons
       add_polygon if rand(Evolution::ADD_POLYGON_MUTATION_RATE) == 0
@@ -25,17 +29,22 @@ module Evolution
       child = Evolution::Creature.new
       child.polygons = []
       polygons.each{ |polygon| child.polygons << polygon.dup }
+      child.mutate
       return child
     end
     
     def to_svg
-      string = "<svg width=\"800px\" height=\"800px\" "
-      string << "viewBox=\"0 0 #{Evolution::CANVAS_SIZE} #{Evolution::CANVAS_SIZE}\""
-      string << "xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n"
-      string << "\t<rect x=\"0\" y=\"0\" width=\"#{Evolution::CANVAS_SIZE}\" height=\"#{Evolution::CANVAS_SIZE}\""
-      string << " fill=\"#{Evolution::CANVAS_BACKGROUND}\" />"
+      string = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 #{Evolution::CANVAS_SIZE} #{Evolution::CANVAS_SIZE}\"xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n\t<rect x=\"0\" y=\"0\" width=\"#{Evolution::CANVAS_SIZE}\" height=\"#{Evolution::CANVAS_SIZE}\" fill=\"#{Evolution::CANVAS_BACKGROUND}\" />"
       polygons.each { |polygon| string << polygon.to_svg }
       string << "</svg>"
+    end
+    
+    def to_image
+      @image ||= RVG.new(Evolution::CANVAS_SIZE, Evolution::CANVAS_SIZE)
+      @image.viewbox(0, 0, Evolution::CANVAS_SIZE, Evolution::CANVAS_SIZE){ |canvas|
+        canvas.background_fill = Evolution::CANVAS_BACKGROUND
+        polygons.each{ |polygon| canvas.polygon(polygon.points.flatten).styles(:fill=> polygon.fill_string) }
+      }.draw
     end
     
     

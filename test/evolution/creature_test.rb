@@ -69,6 +69,7 @@ class CreatureTest < Test::Unit::TestCase
   context 'spawning a child' do
     
     setup do
+      stub.instance_of(Evolution::Creature).mutate { }
       @parent = Evolution::Creature.new
       @child = @parent.spawn_child
     end
@@ -99,6 +100,11 @@ class CreatureTest < Test::Unit::TestCase
         
     should 'convert to valid svg' do
       @creature.to_svg.should == "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 200 200\"xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n\t<rect x=\"0\" y=\"0\" width=\"200\" height=\"200\" fill=\"black\" />\t<polygon fill=\"#010101\" fill-opacity=\"0.00390625\" points=\"1,1 1,1 1,1\" /></svg>"
+    end
+    
+    should 'create rmagick image' do
+      mock.proxy(RVG).new(Evolution::CANVAS_SIZE, Evolution::CANVAS_SIZE)
+      @creature.to_image
     end
     
   end
