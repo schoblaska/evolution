@@ -49,6 +49,23 @@ class CreatureTest < Test::Unit::TestCase
         
   end
   
+  context 'render and svg path' do
+    
+    setup do
+      @creature = Evolution::Creature.new
+      @creature.id = 1
+    end
+    
+    should 'generate valid render path' do
+      assert @creature.image_path.include?('render/000000001.gif')
+    end
+    
+    should 'generate valid svg path' do
+      assert @creature.svg_path.include?('render/000000001.txt')
+    end
+    
+  end
+  
   context 'spawning a child' do
     
     should 'dup each polygon'
