@@ -2,10 +2,10 @@ require 'rubygems'
 require 'rvg/rvg'
 require 'fileutils.rb'
 
-require 'evolution/creature'
-require 'evolution/polygon'
-require 'evolution/simulation'
-require 'evolution/class_ext'
+require File.dirname(__FILE__) + '/evolution/creature'
+require File.dirname(__FILE__) + '/evolution/polygon'
+require File.dirname(__FILE__) + '/evolution/simulation'
+require File.dirname(__FILE__) + '/evolution/class_ext'
 
 include Magick
 

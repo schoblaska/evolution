@@ -14,11 +14,11 @@ module Evolution
     end
     
     def image_path
-      render_directory + "#{"%09i" % id}.gif"
+      File.join(render_directory, "#{"%09i" % id}.gif")
     end
 
     def svg_path
-      render_directory + "#{"%09i" % id}.txt"
+      File.join(render_directory, "#{"%09i" % id}.txt")
     end
     
     
@@ -33,7 +33,7 @@ module Evolution
     private
     
     def render_directory
-      File.dirname(__FILE__) + "../../render/"
+      File.join(File.dirname(__FILE__), "/../../render")
     end
     
     def add_polygon
