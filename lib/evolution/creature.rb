@@ -14,11 +14,11 @@ module Evolution
     end
     
     def image_path
-      File.join(render_directory, "#{"%09i" % id}.gif")
+      File.join(Evolution::RENDER_DIRECTORY, "#{"%09i" % id}.gif")
     end
 
     def svg_path
-      File.join(render_directory, "#{"%09i" % id}.txt")
+      File.join(Evolution::RENDER_DIRECTORY, "#{"%09i" % id}.txt")
     end
     
     def spawn_child
@@ -28,8 +28,14 @@ module Evolution
       return child
     end
     
-    def initialize_copy(other)
-      super
+    def to_svg
+      string = "<svg width=\"800px\" height=\"800px\" "
+      string << "viewBox=\"0 0 #{Evolution::CANVAS_SIZE} #{Evolution::CANVAS_SIZE}\""
+      string << "xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n"
+      string << "\t<rect x=\"0\" y=\"0\" width=\"#{Evolution::CANVAS_SIZE}\" height=\"#{Evolution::CANVAS_SIZE}\""
+      string << " fill=\"#{Evolution::CANVAS_BACKGROUND}\" />"
+      polygons.each { |polygon| string << polygon.to_svg }
+      string << "</svg>"
     end
     
     
@@ -42,10 +48,6 @@ module Evolution
     
 
     private
-    
-    def render_directory
-      File.join(File.dirname(__FILE__), "/../../render")
-    end
     
     def add_polygon
       @polygons << Evolution::Polygon.new
