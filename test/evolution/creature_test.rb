@@ -107,6 +107,10 @@ class CreatureTest < Test::Unit::TestCase
       @creature.to_image
     end
     
+    should 'convert to string' do
+      @creature.to_s.should == "fitness: 57.23793 -- polygon count: 1"
+    end
+    
   end
 
 end

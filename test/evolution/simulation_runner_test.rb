@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__), "/../test_helper")
 
 
-class SimulationTest < Test::Unit::TestCase
+class SimulationRunnerTest < Test::Unit::TestCase
 
   # context 'something' do
   #   

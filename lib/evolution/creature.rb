@@ -47,6 +47,15 @@ module Evolution
       }.draw
     end
     
+    def to_s
+      "#{"%09i" % id} fitness: #{fitness.to_s[0..7]} -- polygon count: #{polygons.size.to_s}"
+    end
+    
+    def save
+      File.open(svg_path, 'w') { |file| file.puts(to_svg) }
+      to_image.write(image_path)
+    end
+    
     
     protected
     
