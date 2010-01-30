@@ -79,6 +79,19 @@ class PolygonTest < Test::Unit::TestCase
       
     end
     
+    context 'converting to svg' do
+      
+      setup do
+        stub.instance_of(Evolution::Polygon).rand { 1 }
+        @polygon = Evolution::Polygon.new
+      end
+      
+      should 'convert polygon points and rgba to valid svg string' do
+        @polygon.to_svg.should == "\t<polygon fill=\"#010101\" fill-opacity=\"0.00390625\" points=\"1,1 1,1 1,1\" />"
+      end
+      
+    end
+    
   end
 
 end

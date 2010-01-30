@@ -15,6 +15,13 @@ module Evolution
       add_point     if rand(Evolution::ADD_POINT_MUTATION_RATE)  == 0
     end
     
+    def to_svg
+      fill = "#" + red.to_hex + green.to_hex + blue.to_hex
+      fill_opacity = alpha / 256.0
+      points_string = points.map{ |point| point.join(',') }.join(' ')
+      "\t<polygon fill=\"#{fill}\" fill-opacity=\"#{fill_opacity}\" points=\"#{points_string}\" />"
+    end
+    
     
     private
     
