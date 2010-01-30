@@ -9,7 +9,8 @@ module Evolution
     end
     
     def mutate
-      rand(Evolution::NEW_POLYGON_MUTATION_RATE) == 0 ? add_polygon : mutate_polygon
+      mutate_polygons
+      add_polygon if rand(Evolution::ADD_POLYGON_MUTATION_RATE) == 0
     end
     
     def self.next_id
@@ -24,8 +25,8 @@ module Evolution
       @polygons << Evolution::Polygon.new
     end
     
-    def mutate_polygon
-      @polygons[rand(@polygons.size)].mutate
+    def mutate_polygons
+      @polygons.each { |polygon| polygon.mutate }
     end
     
   end

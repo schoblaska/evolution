@@ -25,5 +25,60 @@ class PolygonTest < Test::Unit::TestCase
     end
     
   end
+  
+  context 'mutation' do
+    
+    setup { @polygon = Evolution::Polygon.new }
+    
+    context 'mutating rgba values' do
+      
+      setup do
+        stub(@polygon).rand(Evolution::RGBA_MUTATION_RATE).any_number_of_times { 0 }
+        stub(@polygon).rand { 1 }
+        stub(Evolution).generate_mutation { 99 }
+      end
+      
+      should 'mutate rgba values for polygon' do
+        mock.proxy(@polygon).mutate_rgba
+         
+        @polygon.mutate
+        
+        [:red, :green, :blue, :alpha].each do |attribute|
+          @polygon.send(attribute).should == 99
+        end
+      end
+      
+    end
+    
+    context 'mutating points' do
+      
+      setup do
+        stub(@polygon).rand(Evolution::POINT_MUTATION_RATE).any_number_of_times { 0 }
+        stub(@polygon).rand { 1 }
+        stub(Evolution).generate_mutation { 99 }
+        stub(@polygon).add_point { }
+      end
+      
+      should 'mutate all points on the polygon' do        
+        mock.proxy(@polygon).mutate_points
+        @polygon.mutate
+        @polygon.points.each { |point| point.should == [99, 99] }
+      end
+      
+    end
+    
+    context 'adding a new point' do
+      
+      should 'add a new point to the polygon' do        
+        mock(@polygon).rand(Evolution::ADD_POINT_MUTATION_RATE).any_number_of_times { 0 }
+        stub(@polygon).rand { 1 }
+        mock.proxy(@polygon).add_point
+
+        @polygon.mutate
+      end
+      
+    end
+    
+  end
 
 end

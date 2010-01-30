@@ -25,7 +25,7 @@ class CreatureTest < Test::Unit::TestCase
     context 'adding a new polygon' do
       
       setup do
-        mock(@creature).rand(Evolution::NEW_POLYGON_MUTATION_RATE) { 0 }
+        mock(@creature).rand(Evolution::ADD_POLYGON_MUTATION_RATE) { 0 }
         mock.proxy(@creature).add_polygon
         @creature.mutate
       end
@@ -34,16 +34,14 @@ class CreatureTest < Test::Unit::TestCase
       
     end
     
-    context 'mutating an existing polygon' do
+    context 'mutating existing polygons' do
       
       setup do
-        mock(@creature).rand(Evolution::NEW_POLYGON_MUTATION_RATE) { 1 }
-        stub(@creature).rand { 0 }
-        mock.proxy(@creature).mutate_polygon
+        mock.proxy(@creature).mutate_polygons
       end
       
-      should 'select and mutate an existing polygon' do
-        mock.proxy(@creature.polygons[0]).mutate
+      should 'mutate all existing polygons' do
+        @creature.polygons.each { |polygon| mock.proxy(polygon).mutate }
         @creature.mutate
       end
       
