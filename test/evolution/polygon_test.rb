@@ -79,7 +79,7 @@ class PolygonTest < Test::Unit::TestCase
       
     end
     
-    context 'converting to svg' do
+    context 'svg and rmagick strings' do
       
       setup do
         stub.instance_of(Evolution::Polygon).rand { 1 }
@@ -88,6 +88,10 @@ class PolygonTest < Test::Unit::TestCase
       
       should 'convert polygon points and rgba to valid svg string' do
         @polygon.to_svg.should == "\t<polygon fill=\"#010101\" fill-opacity=\"0.00390625\" points=\"1,1 1,1 1,1\" />"
+      end
+      
+      should 'convert polygon rgba values to valid fill string for rmagick' do
+        @polygon.fill_string.should == '#01010101'
       end
       
     end

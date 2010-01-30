@@ -22,6 +22,10 @@ module Evolution
       "\t<polygon fill=\"#{fill}\" fill-opacity=\"#{fill_opacity}\" points=\"#{points_string}\" />"
     end
     
+    def fill_string
+      "#" + red.to_hex + green.to_hex + blue.to_hex + alpha.to_hex
+    end
+    
     
     private
     
