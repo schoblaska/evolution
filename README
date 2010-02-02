@@ -8,9 +8,7 @@ Evolution is a ruby implementation of a hill-climbing algorithm that uses RMagic
 Usage
 =====
  
-1 - Pick a baseline image you wish to render.
-2 - Adjust the path to your baseline image and render directory in the top of evolution.rb
-3 - "ruby evolution.rb"
+'ruby bin/evolution'
 
 Examples: http://www.flickr.com/photos/8745664@N06/sets/72157621783734372/
 
