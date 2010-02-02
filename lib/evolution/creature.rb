@@ -28,7 +28,7 @@ module Evolution
     def spawn_child
       child = Evolution::Creature.new
       child.polygons = []
-      polygons.each{ |polygon| child.polygons << polygon.dup }
+      polygons.each{ |polygon| child.polygons << Evolution::Polygon.new(polygon) }
       child.mutate
       return child
     end

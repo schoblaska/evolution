@@ -83,6 +83,7 @@ class PolygonTest < Test::Unit::TestCase
       
       setup do
         stub.instance_of(Evolution::Polygon).rand { 1 }
+        stub(Evolution).generate_mutation { 1 }
         @polygon = Evolution::Polygon.new
       end
       

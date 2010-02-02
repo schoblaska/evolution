@@ -16,7 +16,7 @@ module Evolution
     end
     
     def self.bump
-      @@bump = 0
+      @@bump ||= 0
       @@bump += 1
     end
 

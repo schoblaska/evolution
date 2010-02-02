@@ -95,6 +95,7 @@ class CreatureTest < Test::Unit::TestCase
     
     setup do
       stub.instance_of(Evolution::Polygon).rand { 1 }
+      stub(Evolution).generate_mutation { 1 }
       @creature = Evolution::Creature.new
     end
         
@@ -108,7 +109,7 @@ class CreatureTest < Test::Unit::TestCase
     end
     
     should 'convert to string' do
-      @creature.to_s.should == "fitness: 57.23793 -- polygon count: 1"
+      assert @creature.to_s.include?("fitness: 57.23793 -- polygon count: 1")
     end
     
   end

@@ -3,10 +3,16 @@ module Evolution
     
     attr_accessor :points, :red, :green, :blue, :alpha
     
-    def initialize
+    def initialize(other = nil)
       @points = []
-      3.times { add_point }
-      [:red=, :green=, :blue=, :alpha=].each{ |method| send(method, rand(256)) }
+      
+      if other
+        other.points.each { |point| self.points << point }
+        [:red, :green, :blue, :alpha].each{ |method| send("#{method}=", other.send(method)) }
+      else
+        3.times { add_point }
+        [:red=, :green=, :blue=, :alpha=].each{ |method| send(method, rand(256)) }
+      end
     end
     
     def mutate
@@ -44,7 +50,24 @@ module Evolution
     end
     
     def add_point
-      @points << [rand(Evolution::CANVAS_SIZE), rand(Evolution::CANVAS_SIZE)]
+      if points.empty?
+        @points << [rand(Evolution::CANVAS_SIZE), rand(Evolution::CANVAS_SIZE)]
+      elsif points.size == 1
+        x = Evolution.generate_mutation(:initial => points[0][0], :min => 0, :max => Evolution::CANVAS_SIZE - 1)
+        y = Evolution.generate_mutation(:initial => points[0][1], :min => 0, :max => Evolution::CANVAS_SIZE - 1)
+        @points << [x, y]
+      else
+        point_a = points[rand(points.size)]
+        index = points.index(point_a)
+        point_b = points[(index + 1) % points.size]
+        x = Evolution.generate_mutation( :initial => (point_a[0] + point_b[0]) / 2,
+                                         :min => 0,
+                                         :max => Evolution::CANVAS_SIZE - 1 )
+        y = Evolution.generate_mutation( :initial => (point_a[1] + point_b[1]) / 2,
+                                         :min => 0,
+                                         :max => Evolution::CANVAS_SIZE - 1 )
+        @points.insert(index + 1, [x, y])
+      end
     end
     
   end
