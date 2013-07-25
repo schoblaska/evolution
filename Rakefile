@@ -3,7 +3,7 @@ require './lib/evolution'
 task :run do
   config = {
     :canvas_background => 'black',
-    :render_directory => File.join(File.dirname(__FILE__), "/../images/renders"),
+    :render_directory => File.join(File.dirname(__FILE__), "./images/renders"),
     :baseline_image => Magick::Image.read('./images/baselines/baseline-200.gif')[0],
     :add_polygon_mutation_rate => 100,
     :rgba_mutation_rate => 20,
@@ -17,10 +17,10 @@ task :run do
   CONFIG = config
 
   @most_fit = Evolution::Candidate.new
+  write = 0
 
   while @most_fit.fitness > 10
     child = @most_fit.spawn_child
-    write = 0
 
     if child.fitness < @most_fit.fitness
       write += 1
