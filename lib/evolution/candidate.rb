@@ -10,7 +10,7 @@ module Evolution
     end
 
     def fitness
-      @fitness ||= to_image.difference(CONFIG[:baseline_image][0])[0]
+      @fitness ||= to_image.difference(CONFIG[:baseline_image])[0]
     end
 
     def mutate
@@ -36,7 +36,7 @@ module Evolution
     end
 
     def to_svg
-      string = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 #{CONFIG[:canvas_size]} #{CONFIG[:canvas_size]}\"xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n  <rect x=\"0\" y=\"0\" width=\"#{CONFIG[:canvas_size]}\" height=\"#{CONFIG[:canvas_size]}\" fill=\"#{CONFIG[:canvas_background]}\" />\n"
+      string = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 #{CONFIG[:canvas_width]} #{CONFIG[:canvas_height]}\"xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n  <rect x=\"0\" y=\"0\" width=\"#{CONFIG[:canvas_width]}\" height=\"#{CONFIG[:canvas_height]}\" fill=\"#{CONFIG[:canvas_background]}\" />\n"
       string << polygons.map{|polygon| "  #{polygon.to_svg}"}.join("\n")
       string << "\n</svg>"
     end
@@ -44,8 +44,8 @@ module Evolution
     def to_image
       return @image if @image
 
-      @image = RVG.new(CONFIG[:canvas_size], CONFIG[:canvas_size])
-      @image.viewbox(0, 0, CONFIG[:canvas_size], CONFIG[:canvas_size]){ |canvas|
+      @image = RVG.new(CONFIG[:canvas_width], CONFIG[:canvas_height])
+      @image.viewbox(0, 0, CONFIG[:canvas_width], CONFIG[:canvas_height]){ |canvas|
         canvas.background_fill = CONFIG[:canvas_background]
         polygons.each{|polygon| canvas.polygon(polygon.points.flatten).styles(:fill=> polygon.fill_string)}
       }.draw
