@@ -11,8 +11,8 @@ task :run do
     :add_point_mutation_rate => ENV['add_point_mutation_rate'] ? ENV['add_point_mutation_rate'].to_i : 200
   }
 
-  config[:canvas_width] = config[:baseline_image].bounding_box.width
-  config[:canvas_height] = config[:baseline_image].bounding_box.height
+  config[:canvas_width] = config[:baseline_image].columns
+  config[:canvas_height] = config[:baseline_image].rows
 
   CONFIG = config
 
