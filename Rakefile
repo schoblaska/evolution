@@ -2,13 +2,13 @@ require './lib/evolution'
 
 task :run do
   config = {
-    :canvas_background => 'black',
+    :canvas_background => ENV['canvas_background'] || 'black',
     :render_directory => File.join(File.dirname(__FILE__), "./images/renders"),
-    :baseline_image => Magick::Image.read('./images/baselines/baseline-200.gif')[0],
-    :add_polygon_mutation_rate => 100,
-    :rgba_mutation_rate => 20,
-    :point_mutation_rate => 20,
-    :add_point_mutation_rate => 200
+    :baseline_image => ENV['baseline_image'] || Magick::Image.read('./images/baselines/baseline-200.gif')[0],
+    :add_polygon_mutation_rate => ENV['add_polygon_mutation_rate'] ? ENV['add_polygon_mutation_rate'].to_i : 100,
+    :rgba_mutation_rate => ENV['rgba_mutation_rate'] ? ENV['rgba_mutation_rate'].to_i : 20,
+    :point_mutation_rate => ENV['point_mutation_rate'] ? ENV['point_mutation_rate'].to_i : 20,
+    :add_point_mutation_rate => ENV['add_point_mutation_rate'] ? ENV['add_point_mutation_rate'].to_i : 200
   }
 
   config[:canvas_width] = config[:baseline_image].bounding_box.width
