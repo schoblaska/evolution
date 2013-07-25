@@ -2,6 +2,14 @@ module Evolution
   class Polygon
     attr_accessor :points, :red, :green, :blue, :alpha
 
+    def self.calculate_mutation(var = {})
+      min, max, initial = var[:min] || 0, var[:max] || 255, var[:initial]
+
+      upwards = (((rand + 1) ** 12.0 / 4096) * (max - initial)).to_i
+      downwards = (((rand + 1) ** 12.0 / 4096) * (initial - min)).to_i
+      return (initial + upwards - downwards).restrict(:min => min, :max => max)
+    end
+
     def initialize(other = nil)
       @points = []
 
@@ -35,14 +43,14 @@ module Evolution
 
     def mutate_rgba
       [:red, :green, :blue, :alpha].each do |attribute|
-        mutated_value = Evolution.generate_mutation(:min => 0, :max => 255, :initial => send(attribute))
+        mutated_value = Polygon.calculate_mutation(:min => 0, :max => 255, :initial => send(attribute))
         send("#{attribute}=", mutated_value)
       end
     end
 
     def mutate_points
       self.points = points.map do |point|
-        point.map{|value| Evolution.generate_mutation(:max => CONFIG[:canvas_size], :initial => value)}
+        point.map{|value| Polygon.calculate_mutation(:max => CONFIG[:canvas_size], :initial => value)}
       end
     end
 
@@ -50,17 +58,17 @@ module Evolution
       if points.empty?
         @points << [rand(CONFIG[:canvas_size]), rand(CONFIG[:canvas_size])]
       elsif points.size == 1
-        x = Evolution.generate_mutation(:initial => points[0][0], :min => 0, :max => CONFIG[:canvas_size]- 1)
-        y = Evolution.generate_mutation(:initial => points[0][1], :min => 0, :max => CONFIG[:canvas_size]- 1)
+        x = Polygon.calculate_mutation(:initial => points[0][0], :min => 0, :max => CONFIG[:canvas_size]- 1)
+        y = Polygon.calculate_mutation(:initial => points[0][1], :min => 0, :max => CONFIG[:canvas_size]- 1)
         @points << [x, y]
       else
         point_a = points[rand(points.size)]
         index = points.index(point_a)
         point_b = points[(index + 1) % points.size]
-        x = Evolution.generate_mutation( :initial => (point_a[0] + point_b[0]) / 2,
+        x = Polygon.calculate_mutation( :initial => (point_a[0] + point_b[0]) / 2,
                                          :min => 0,
                                          :max => CONFIG[:canvas_size]- 1 )
-        y = Evolution.generate_mutation( :initial => (point_a[1] + point_b[1]) / 2,
+        y = Polygon.calculate_mutation( :initial => (point_a[1] + point_b[1]) / 2,
                                          :min => 0,
                                          :max => CONFIG[:canvas_size]- 1 )
         @points.insert(index + 1, [x, y])
