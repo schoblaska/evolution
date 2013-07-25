@@ -3,7 +3,7 @@ require 'bundler'
 
 Bundler.require
 
-Dir["./lib/evolution/*.rb"].each {|file| require file }
+Dir["./lib/evolution/*.rb"].each{|file| require file }
 
 include Magick
 

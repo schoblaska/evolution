@@ -6,24 +6,24 @@ module Evolution
       @points = []
 
       if other
-        other.points.each { |point| self.points << point }
-        [:red, :green, :blue, :alpha].each{ |method| send("#{method}=", other.send(method)) }
+        other.points.each{|point| self.points << point}
+        [:red, :green, :blue, :alpha].each{|method| send("#{method}=", other.send(method))}
       else
         3.times { add_point }
-        [:red=, :green=, :blue=, :alpha=].each{ |method| send(method, rand(256)) }
+        [:red=, :green=, :blue=, :alpha=].each{|method| send(method, rand(256))}
       end
     end
 
     def mutate
-      mutate_rgba   if rand(CONFIG[:rgba_mutation_rate])       == 0
-      mutate_points if rand(CONFIG[:point_mutation_rate])      == 0
-      add_point     if rand(CONFIG[:add_point_mutation_rate])  == 0
+      mutate_rgba   if rand(CONFIG[:rgba_mutation_rate])      == 0
+      mutate_points if rand(CONFIG[:point_mutation_rate])     == 0
+      add_point     if rand(CONFIG[:add_point_mutation_rate]) == 0
     end
 
     def to_svg
       fill = "#" + red.to_hex + green.to_hex + blue.to_hex
       fill_opacity = alpha / 256.0
-      points_string = points.map{ |point| point.join(',') }.join(' ')
+      points_string = points.map{|point| point.join(',')}.join(' ')
       "<polygon fill=\"#{fill}\" fill-opacity=\"#{fill_opacity}\" points=\"#{points_string}\" />"
     end
 
@@ -41,9 +41,8 @@ module Evolution
     end
 
     def mutate_points
-      points.each_with_index do |point, i|
-        mutated_values = point.map { |value| Evolution.generate_mutation(:max => CONFIG[:canvas_size], :initial => value) }
-        points[i] = mutated_values
+      self.points = points.map do |point|
+        point.map{|value| Evolution.generate_mutation(:max => CONFIG[:canvas_size], :initial => value)}
       end
     end
 

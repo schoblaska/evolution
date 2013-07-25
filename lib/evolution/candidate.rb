@@ -29,8 +29,9 @@ module Evolution
     def spawn_child
       child = Evolution::Candidate.new
       child.polygons = []
-      polygons.each{ |polygon| child.polygons << Evolution::Polygon.new(polygon) }
+      polygons.each{|polygon| child.polygons << Evolution::Polygon.new(polygon)}
       child.mutate
+
       return child
     end
 
@@ -46,7 +47,7 @@ module Evolution
       @image = RVG.new(CONFIG[:canvas_size], CONFIG[:canvas_size])
       @image.viewbox(0, 0, CONFIG[:canvas_size], CONFIG[:canvas_size]){ |canvas|
         canvas.background_fill = CONFIG[:canvas_background]
-        polygons.each{ |polygon| canvas.polygon(polygon.points.flatten).styles(:fill=> polygon.fill_string) }
+        polygons.each{|polygon| canvas.polygon(polygon.points.flatten).styles(:fill=> polygon.fill_string)}
       }.draw
     end
 
@@ -55,10 +56,8 @@ module Evolution
     end
 
     def save
-      File.open(svg_path, 'w') {|file| file.puts(to_svg)}
+      File.open(svg_path, 'w'){|file| file.puts(to_svg)}
       to_image.draw.write(image_path)
-    rescue => e
-      binding.pry
     end
 
     protected
@@ -76,7 +75,7 @@ module Evolution
     end
 
     def mutate_polygons
-      @polygons.each {|polygon| polygon.mutate}
+      @polygons.each{|polygon| polygon.mutate}
     end
   end
 end
