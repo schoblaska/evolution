@@ -2,9 +2,9 @@ require './lib/evolution'
 
 task :run do
   config = {
-    :canvas_background => ENV['canvas_background'] || 'black',
+    :canvas_background => ENV['canvas_background'] || 'white',
     :render_directory => File.join(File.dirname(__FILE__), "./images/renders"),
-    :baseline_image => ENV['baseline_image'] || Magick::Image.read('./images/baselines/baseline-200.gif')[0],
+    :baseline_image => ENV['baseline_image'] || Magick::Image.read('./images/baseline.jpg')[0],
     :add_polygon_mutation_rate => ENV['add_polygon_mutation_rate'] ? ENV['add_polygon_mutation_rate'].to_i : 100,
     :rgba_mutation_rate => ENV['rgba_mutation_rate'] ? ENV['rgba_mutation_rate'].to_i : 20,
     :point_mutation_rate => ENV['point_mutation_rate'] ? ENV['point_mutation_rate'].to_i : 20,
