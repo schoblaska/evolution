@@ -1,11 +1,9 @@
 require 'rubygems'
-require 'rvg/rvg'
-require 'fileutils.rb'
+require 'bundler'
 
-require File.join(File.dirname(__FILE__), '/evolution/creature')
-require File.join(File.dirname(__FILE__), '/evolution/polygon')
-require File.join(File.dirname(__FILE__), '/evolution/simulation_runner')
-require File.join(File.dirname(__FILE__), '/evolution/class_ext')
+Bundler.require
+
+Dir["./lib/evolution/*.rb"].each {|file| require file }
 
 include Magick
 

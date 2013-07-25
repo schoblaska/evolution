@@ -2,7 +2,7 @@ module Evolution
   class SimulationRunner
     
     def self.run
-      @most_fit = Evolution::Creature.new
+      @most_fit = Evolution::Candidate.new
       
       while @most_fit.fitness > 10
         child = @most_fit.spawn_child
