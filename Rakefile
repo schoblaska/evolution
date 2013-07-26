@@ -1,11 +1,11 @@
 require './lib/evolution'
 
 task :run do
-  baseline_image_path = ENV['baseline_image'] ? ENV['baseline_image'] : './images/baseline.png'
+  baseline_image_path = ENV['baseline_image'] ? ENV['baseline_image'] : './images/baseline.jpg'
   baseline_image = Magick::Image.read(baseline_image_path)[0]
 
   CONFIG = {
-    :canvas_background => ENV['canvas_background'] || 'black',
+    :canvas_background => ENV['canvas_background'] || 'white',
     :render_directory => File.join(File.dirname(__FILE__), "./images/renders"),
     :baseline_image => baseline_image,
     :canvas_width => baseline_image.columns,

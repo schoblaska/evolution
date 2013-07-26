@@ -33,9 +33,9 @@ Rendered images and svg files will be placed in the `images/renders` directory.
 
 The following environment variables can be set when using the `rake run` command:
 
-**baseline_image**: The path to the image you want to render. The larger the image, the more time it will take RMagick to compare each set of candidates, and the longer it will take to converge. Default: './images/baseline.png'
+**baseline_image**: The path to the image you want to render. The larger the image, the more time it will take RMagick to compare each set of candidates, and the longer it will take to converge. Default: './images/baseline.jpg'
 
-**canvas_background**: The color of the canvas, behind the rendered polygons. Default: 'black'
+**canvas_background**: The color of the canvas, behind the rendered polygons. Default: 'white'
 
 **add_polygon_mutation_rate**: The rate at which new polygons will occur during mutations. There is a 1/x chance of this mutation occuring, so setting it to 1 will result in a new polygon in each mutation, while setting it to 100 will result in a 1% of a new polygon being added in each mutation. Default: 100
 
