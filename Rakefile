@@ -10,12 +10,12 @@ task :run do
     :baseline_image => baseline_image,
     :canvas_width => baseline_image.columns,
     :canvas_height => baseline_image.rows,
-    :add_polygon_mutation_rate => ENV['add_polygon_mutation_rate'] ? ENV['add_polygon_mutation_rate'].to_i : 100,
-    :rgba_mutation_rate => ENV['rgba_mutation_rate'] ? ENV['rgba_mutation_rate'].to_i : 20,
-    :point_mutation_rate => ENV['point_mutation_rate'] ? ENV['point_mutation_rate'].to_i : 20,
-    :add_point_mutation_rate => ENV['add_point_mutation_rate'] ? ENV['add_point_mutation_rate'].to_i : 200,
+    :add_polygon_mutation_rate => ENV['add_polygon_mutation_rate'] ? ENV['add_polygon_mutation_rate'].to_i : 300,
+    :rgba_mutation_rate => ENV['rgba_mutation_rate'] ? ENV['rgba_mutation_rate'].to_i : 300,
+    :point_mutation_rate => ENV['point_mutation_rate'] ? ENV['point_mutation_rate'].to_i : 300,
+    :add_point_mutation_rate => ENV['add_point_mutation_rate'] ? ENV['add_point_mutation_rate'].to_i : 500,
     :fitness_target => ENV['fitness_target'] ? ENV['fitness_target'].to_i : 500,
-    :write_frequency => ENV['write_frequency'] ? ENV['write_frequency'].to_i : 50
+    :write_frequency => ENV['write_frequency'] ? ENV['write_frequency'].to_i : 100
   }
 
   most_fit = Evolution::Candidate.new

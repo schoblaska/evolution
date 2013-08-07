@@ -4,7 +4,8 @@ module Evolution
 
     def self.calculate_mutation(var = {})
       min, max, initial = var[:min] || 0, var[:max] || 255, var[:initial]
-      (initial + rand(5) - rand(5)).restrict(:min => min, :max => max)
+      range = max - min
+      (initial + rand(range / 5) - rand(range / 5)).restrict(:min => min, :max => max)
     end
 
     def initialize(other = nil)
@@ -20,9 +21,12 @@ module Evolution
     end
 
     def mutate
-      mutate_rgba   if rand(CONFIG[:rgba_mutation_rate])      == 0
-      mutate_points if rand(CONFIG[:point_mutation_rate])     == 0
-      add_point     if rand(CONFIG[:add_point_mutation_rate]) == 0
+      mutate_rgba(:red)   if rand(CONFIG[:rgba_mutation_rate])      == 0
+      mutate_rgba(:green) if rand(CONFIG[:rgba_mutation_rate])      == 0
+      mutate_rgba(:blue)  if rand(CONFIG[:rgba_mutation_rate])      == 0
+      mutate_rgba(:alpha) if rand(CONFIG[:rgba_mutation_rate])      == 0
+      mutate_points       if rand(CONFIG[:point_mutation_rate])     == 0
+      add_point           if rand(CONFIG[:add_point_mutation_rate]) == 0
     end
 
     def to_svg
@@ -38,11 +42,9 @@ module Evolution
 
     private
 
-    def mutate_rgba
-      [:red, :green, :blue, :alpha].each do |attribute|
-        mutated_value = Polygon.calculate_mutation(:min => 0, :max => 255, :initial => send(attribute))
-        send("#{attribute}=", mutated_value)
-      end
+    def mutate_rgba(rgba, min = 0, max = 255)
+      mutated_value = Polygon.calculate_mutation(:min => min, :max => max, :initial => send(rgba))
+      send("#{rgba}=", mutated_value)
     end
 
     def mutate_points

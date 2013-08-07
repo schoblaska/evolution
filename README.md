@@ -37,14 +37,14 @@ The following environment variables can be set when using the `rake run` command
 
 **canvas_background**: The color of the canvas, behind the rendered polygons. Default: 'white'
 
-**add_polygon_mutation_rate**: The rate at which new polygons will occur during mutations. There is a 1/x chance of this mutation occuring, so setting it to 1 will result in a new polygon in each mutation, while setting it to 100 will result in a 1% of a new polygon being added in each mutation. Default: 100
+**add_polygon_mutation_rate**: The rate at which new polygons will occur during mutations. There is a 1/x chance of this mutation occuring, so setting it to 1 will result in a new polygon in each mutation, while setting it to 100 will result in a 1% of a new polygon being added in each mutation. Default: 300
 
-**rgba_mutation_rate**: The rate at which polygons will have their RGBA values changed during mutations. There is a 1/x chance of this mutation occuring. Default: 20
+**rgba_mutation_rate**: The rate at which polygons will have their RGBA values changed during mutations. There is a 1/x chance of this mutation occuring. Default: 300
 
-**point_mutation_rate**: The rate at which points will have their coordinates changed during mutations. There is a 1/x chance of this mutation occuring. Default: 20
+**point_mutation_rate**: The rate at which points will have their coordinates changed during mutations. There is a 1/x chance of this mutation occuring. Default: 300
 
-**add_point_mutation_rate**: The rate at which new points will be added to polygons during mutations. There is a 1/x chance of this mutation occuring. Default: 200
+**add_point_mutation_rate**: The rate at which new points will be added to polygons during mutations. There is a 1/x chance of this mutation occuring. Default: 500
 
 **fitness_target**: Each candidate receives a "fitness" score according to how similar it is to the target baseline image, with a score of 0 indicating a perfect match. The fitness_target is the value which, when reached, will cause the program to end. Default: 500
 
-**write_frequency**: Every x successful mutations, render the image to the `images/renders` directory and save the svg string. Default: 50
+**write_frequency**: Every x successful mutations, render the image to the `images/renders` directory and save the svg string. Default: 100
