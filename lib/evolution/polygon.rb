@@ -4,8 +4,8 @@ module Evolution
 
     def self.calculate_mutation(var = {})
       min, max, initial = var[:min] || 0, var[:max] || 255, var[:initial]
-      range = max - min
-      (initial + rand(range / 5) - rand(range / 5)).restrict(:min => min, :max => max)
+      range = var[:range] || (max - min) / 5
+      (initial + rand(range) - range / 2).restrict(:min => min, :max => max)
     end
 
     def initialize(other = nil)
@@ -59,9 +59,9 @@ module Evolution
     def add_point
       if points.empty?
         @points << [rand(CONFIG[:canvas_width]), rand(CONFIG[:canvas_height])]
-      elsif points.size == 1
-        x = Polygon.calculate_mutation(:initial => points[0][0], :min => 0, :max => CONFIG[:canvas_width] - 1)
-        y = Polygon.calculate_mutation(:initial => points[0][1], :min => 0, :max => CONFIG[:canvas_height] - 1)
+      elsif points.size < 3
+        x = Polygon.calculate_mutation(:initial => points[0][0], :min => 0, :max => CONFIG[:canvas_width] - 1, :range => 10)
+        y = Polygon.calculate_mutation(:initial => points[0][1], :min => 0, :max => CONFIG[:canvas_height] - 1, :range => 10)
         @points << [x, y]
       else
         point_a = points[rand(points.size)]
