@@ -4,7 +4,7 @@ module Evolution
 
     def self.calculate_mutation(var = {})
       min, max, initial = var[:min] || 0, var[:max] || 255, var[:initial]
-      range = var[:range] || (max - min) / 5
+      range = var[:range] || (max - min) / 6
       (initial + rand(range) - range / 2).restrict(:min => min, :max => max)
     end
 
