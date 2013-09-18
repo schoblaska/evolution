@@ -36,7 +36,7 @@ module Evolution
     end
 
     def to_svg
-      string = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 #{CONFIG[:canvas_width]} #{CONFIG[:canvas_height]}\"xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n  <rect x=\"0\" y=\"0\" width=\"#{CONFIG[:canvas_width]}\" height=\"#{CONFIG[:canvas_height]}\" fill=\"#{CONFIG[:canvas_background]}\" />\n"
+      string = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 #{CONFIG[:canvas_width]} #{CONFIG[:canvas_height]}\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n  <rect x=\"0\" y=\"0\" width=\"#{CONFIG[:canvas_width]}\" height=\"#{CONFIG[:canvas_height]}\" fill=\"#{CONFIG[:canvas_background]}\" />\n"
       string << polygons.map{|polygon| "  #{polygon.to_svg}"}.join("\n")
       string << "\n</svg>"
     end
